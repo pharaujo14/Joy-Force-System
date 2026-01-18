@@ -319,14 +319,33 @@ def pagina_relatorios(db):
     }
 
     fig, ax = plt.subplots(figsize=(12, 5))
+
+    x_vals = player_df["timestamp"].to_numpy()
+    y_vals = player_df[metric_map_player[metric_player]].to_numpy()
+
     ax.plot(
-        player_df["timestamp"].to_numpy(),
-        player_df[metric_map_player[metric_player]].to_numpy(),
+        x_vals,
+        y_vals,
         marker="o",
-        linewidth=2,
+        linewidth=2
     )
 
+    # === VALORES SOBRE OS PONTOS ===
+    for x, y in zip(x_vals, y_vals):
+        ax.text(
+            x,
+            y,
+            f"{y:.2f}" if metric_player != "Drone" else f"{int(y)}",
+            ha="center",
+            va="bottom",
+            fontsize=9,
+            fontweight="bold"
+        )
+
     ax.set_title(f"Evolução de {metric_player} – {selected_player}")
+    ax.set_xlabel("Data")
+    ax.set_ylabel(metric_player)
     plt.xticks(rotation=45)
     plt.tight_layout()
+
     st.pyplot(fig)
